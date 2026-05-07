@@ -257,23 +257,31 @@ main.app-container {
 
 .sprite-row {
     display: flex;
-    gap: 6px;
+    gap: 8px;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: flex-start;
 }
 
 .sprite-mini {
-    width: 56px;
-    height: 56px;
+    width: 64px;
+    height: 64px;
     object-fit: contain;
     border: 2px solid #ddd;
     border-radius: 8px;
     cursor: pointer;
-    transition: border-color .2s;
+    transition: all .2s;
     background: #fff;
 }
 
-.sprite-mini:hover, .sprite-mini.active { border-color: var(--amarillo); }
+.sprite-mini:hover { 
+    border-color: var(--amarillo);
+    transform: scale(1.1);
+}
+
+.sprite-mini.active {
+    border-color: var(--amarillo);
+    box-shadow: 0 0 8px rgba(249, 220, 92, 0.5);
+}
 
 .detail-panel-right {
     flex: 1;

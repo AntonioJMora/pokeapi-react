@@ -33,17 +33,19 @@ const HomePage = () => {
   };
 
   return (
-    <main>
-      <SearchBar
-        entityType={entityType}
-        setEntityType={setEntityType}
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-      />
+    <main className="app-container">
+      <section className="card">
+        <h2>Buscador de la API de Pokémon</h2>
+        
+        <SearchBar
+          entityType={entityType}
+          setEntityType={setEntityType}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+        />
 
-      <section>
         {loading && <p className="search-state">Cargando resultados...</p>}
-        {error && <p className="error-state">{error}</p>}
+        {error && <p className="search-state" style={{ color: '#c03028' }}>{error}</p>}
         {!loading && !error && results.length === 0 && (
           <p className="search-state">No se encontraron resultados.</p>
         )}

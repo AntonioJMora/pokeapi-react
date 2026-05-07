@@ -25,11 +25,11 @@ const FavoritesPage = () => {
   };
 
   return (
-    <main>
+    <main className="app-container">
       <section className="card">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px', borderBottom: '2px solid var(--borde)', paddingBottom: '15px', marginBottom: '15px' }}>
           <div>
-            <h2 style={{ textDecoration: 'underline' }}>Mis Favoritos</h2>
+            <h2>Mis Favoritos</h2>
             <p className="search-state">
               {favorites.length === 0 
                 ? "Aún no tienes elementos guardados." 
@@ -41,12 +41,8 @@ const FavoritesPage = () => {
               type="button" 
               className="btn-back" 
               style={{ 
-                backgroundColor: isConfirming ? '#ff9800' : '#ff4d4d', 
-                color: 'white',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-                cursor: 'pointer',
-                minWidth: '120px',
-                transition: 'all 0.3s ease'
+                backgroundColor: isConfirming ? '#f08030' : '#c03028', 
+                color: 'white'
               }} 
               onClick={handleClearClick}
             >
@@ -54,9 +50,7 @@ const FavoritesPage = () => {
             </button>
           )}
         </div>
-      </section>
 
-      <section>
         <output className="results-grid">
           {favorites.map((item, index) => (
             <PokemonCard key={`${item.searchType}-${item.name}-${index}`} item={item} />

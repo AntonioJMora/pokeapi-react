@@ -17,11 +17,9 @@ const DetailPage = () => {
       try {
         setLoading(true);
         setError(null);
-        // fetchEntityDetail ahora devuelve { main, extra } para ser compatible
         const detail = await fetchEntityDetail(type || 'pokemon', name);
         setData(detail);
         
-        // Sprite principal (como en api.js original)
         const sprites = detail.main.sprites;
         const mainUrl = sprites?.other?.['official-artwork']?.front_default || sprites?.front_default || '';
         setActiveSprite(mainUrl);
@@ -46,7 +44,7 @@ const DetailPage = () => {
   const isPokemon = type === 'pokemon';
   const activeFav = isFavorite(main.name, type);
 
-  // Helper de descripción (idéntico al original)
+  // Helper de descripción
   const getDescription = (species) => {
     if (!species?.flavor_text_entries?.length) return 'Sin descripción disponible.';
     const es = species.flavor_text_entries.find(e => e.language.name === 'es');
@@ -55,12 +53,34 @@ const DetailPage = () => {
     return en ? en.flavor_text.replace(/\f/g, ' ') : 'Sin descripción disponible.';
   };
 
+  // Helper Recursivo para traer TODAS las imágenes sin límite
+  const getAllSprites = (obj) => {
+    if (!obj) return [];
+    let results = new Map();
+
+    const isImageUrl = (url) => {
+        if (typeof url !== 'string') return false;
+        return url.match(/\.(jpeg|jpg|gif|png|svg)$/) !== null || url.includes('/sprites/');
+    };
+
+    const iterate = (current, prefix = '') => {
+      for (const key in current) {
+        const value = current[key];
+        if (isImageUrl(value)) {
+          results.set(value, prefix || 'Imagen');
+        } else if (value && typeof value === 'object') {
+          iterate(value, key.replace(/_/g, ' '));
+        }
+      }
+    };
+
+    iterate(obj);
+    return Array.from(results).map(([url, label]) => ({ label, url }));
+  };
+
+  const allSprites = getAllSprites(main.sprites || main);
+
   const renderPokemon = () => {
-    const sprites = main.sprites;
-    const shinySprite = sprites?.other?.['official-artwork']?.front_shiny || sprites?.front_shiny || '';
-    const backSprite = sprites?.back_default || '';
-    const mainSprite = sprites?.other?.['official-artwork']?.front_default || sprites?.front_default || '';
-    
     const generation = extra?.generation?.name?.replace('generation-', 'Gen ').toUpperCase() || '—';
 
     return (
@@ -82,12 +102,6 @@ const DetailPage = () => {
               </span>
             ))}
           </p>
-
-          <div className="sprite-row">
-            {shinySprite && <img className={`sprite-mini ${activeSprite === shinySprite ? 'active' : ''}`} src={shinySprite} alt="Shiny" onClick={() => setActiveSprite(shinySprite)} />}
-            {backSprite && <img className={`sprite-mini ${activeSprite === backSprite ? 'active' : ''}`} src={backSprite} alt="Espalda" onClick={() => setActiveSprite(backSprite)} />}
-            {mainSprite && <img className={`sprite-mini ${activeSprite === mainSprite ? 'active' : ''}`} src={mainSprite} alt="Normal" onClick={() => setActiveSprite(mainSprite)} />}
-          </div>
         </section>
 
         <div className="detail-panel-right">
@@ -157,6 +171,25 @@ const DetailPage = () => {
               ))}
             </div>
           </section>
+
+          {/* GALERÍA DE IMÁGENES (Al final del todo) */}
+          {allSprites.length > 0 && (
+            <section className="detail-section">
+              <h3>Galería de Imágenes</h3>
+              <div className="sprite-row">
+                {allSprites.map((s, idx) => (
+                  <img
+                    key={idx}
+                    src={s.url}
+                    alt={s.label}
+                    className={`sprite-mini ${activeSprite === s.url ? 'active' : ''}`}
+                    onClick={() => setActiveSprite(s.url)}
+                    title={s.label}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
         </div>
       </div>
     );
@@ -181,6 +214,7 @@ const DetailPage = () => {
           <h3>Descripción</h3>
           <p style={{ fontSize: '.95rem', lineHeight: '1.6' }}>{description}</p>
         </section>
+
         <section className="detail-section">
           <h3>Información</h3>
           <div className="info-grid">
@@ -190,6 +224,7 @@ const DetailPage = () => {
             {main.cost != null && <div className="info-item"><span className="label">Coste</span><span className="value">{main.cost} ₽</span></div>}
           </div>
         </section>
+
         {(main.pokemon || []).length > 0 && (
           <section className="detail-section">
             <h3>Pokémon relacionados</h3>
@@ -200,6 +235,25 @@ const DetailPage = () => {
               })}
             </div>
           </section>
+        )}
+
+        {/* GALERÍA GENÉRICA (Al final del todo) */}
+        {allSprites.length > 0 && (
+            <section className="detail-section">
+              <h3>Imágenes disponibles</h3>
+              <div className="sprite-row">
+                {allSprites.map((s, idx) => (
+                  <img
+                    key={idx}
+                    src={s.url}
+                    alt={s.label}
+                    className={`sprite-mini ${activeSprite === s.url ? 'active' : ''}`}
+                    onClick={() => setActiveSprite(s.url)}
+                    title={s.label}
+                  />
+                ))}
+              </div>
+            </section>
         )}
       </article>
     );
