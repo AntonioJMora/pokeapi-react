@@ -42,7 +42,7 @@ const PokemonCard = memo(({ item }) => {
     );
   }
 
-  // Tarjeta para otras categorías (tipo, objeto, etc.)
+  // Tarjeta para otras categorías (tipo, objeto, etc.) con soporte para imagen
   return (
     <article className="generic-card">
       <button 
@@ -52,6 +52,11 @@ const PokemonCard = memo(({ item }) => {
         {activeFavorite ? '❤️' : '🤍'}
       </button>
       <Link to={`/${searchType}/${name}`}>
+        {sprite && (
+          <div style={{ textAlign: 'center', padding: '10px 0' }}>
+            <img src={sprite} alt={name} style={{ width: '60px', height: '60px', objectFit: 'contain' }} />
+          </div>
+        )}
         <h3>{name}</h3>
         <span className="poke-id" style={{ textTransform: 'capitalize' }}>{searchType}</span>
       </Link>

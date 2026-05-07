@@ -48,7 +48,7 @@ const _namesMemory = {};
 
 export async function getAllNames(type) {
     if (_namesMemory[type]?.length) return _namesMemory[type];
-    const cacheKey = `poke_allnames_v15_${type}`;
+    const cacheKey = `poke_allnames_v16_${type}`;
     const fromLS = cacheGet(cacheKey);
     if (fromLS !== null && fromLS.length > 0) {
         _namesMemory[type] = fromLS;
@@ -65,7 +65,7 @@ export async function getAllNames(type) {
 
 export async function searchPokeAPI(type, term) {
     const normalized = term.toLowerCase().trim();
-    const cacheKey = `poke_v15_${type}_${normalized}`;
+    const cacheKey = `poke_v16_${type}_${normalized}`;
     const cached = cacheGet(cacheKey);
     if (cached) return cached;
 
@@ -80,20 +80,30 @@ export async function searchPokeAPI(type, term) {
         targetNames = (json.results || []).map(p => p.name);
     }
 
-    const settled = await Promise.allSettled(
-        targetNames.map(name => fetch(`${BASE_URL}/${type}/${name}`).then(r => r.json()))
-    );
+    /* 
+       MODIFICACIÓN: Si es pokemon O item, descargamos el detalle para tener la imagen.
+       Para otras categorías, descargamos el detalle solo si queremos asegurar fotos (como en types).
+    */
+    const needsDetail = ['pokemon', 'item', 'type'].includes(type);
 
-    const results = settled
-        .filter(d => d.status === 'fulfilled')
-        .map(d => ({ ...d.value, searchType: type }));
+    let results = [];
+    if (needsDetail) {
+        const settled = await Promise.allSettled(
+            targetNames.map(name => fetch(`${BASE_URL}/${type}/${name}`).then(r => r.json()))
+        );
+        results = settled
+            .filter(d => d.status === 'fulfilled')
+            .map(d => ({ ...d.value, searchType: type }));
+    } else {
+        results = targetNames.map(name => ({ name, searchType: type }));
+    }
 
     cacheSet(cacheKey, results);
     return results;
 }
 
 export async function fetchEntityDetail(type, nameOrId) {
-    const cacheKey = `poke_detail_v15_${type}_${nameOrId}`;
+    const cacheKey = `poke_detail_v16_${type}_${nameOrId}`;
     const cached = cacheGet(cacheKey);
     if (cached) return cached;
     const res = await fetch(`${BASE_URL}/${type}/${nameOrId}`);
@@ -113,6 +123,9 @@ export async function fetchEntityDetail(type, nameOrId) {
 
 export function getSprite(item) {
     if (!item) return '';
+    // Para items la imagen suele estar en sprites.default
+    if (item.sprites && typeof item.sprites.default === 'string') return item.sprites.default;
+    
     const s = item.sprites || item; 
     const isImageUrl = (url) => {
         if (typeof url !== 'string') return false;
