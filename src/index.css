@@ -137,7 +137,7 @@ main.app-container {
    =================================================== */
 .results-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 15px;
 }
 
@@ -171,9 +171,11 @@ main.app-container {
 }
 
 .poke-card h3 {
-    font-size: .9rem;
+    font-size: .8rem;
     text-transform: capitalize;
     font-weight: 700;
+    padding: 0 25px 0 10px;
+    overflow-wrap: break-word;
 }
 
 .poke-id {
@@ -201,8 +203,10 @@ main.app-container {
 }
 
 .generic-card h3 {
-    font-size: .95rem;
+    font-size: .85rem;
     text-transform: capitalize;
+    padding-right: 30px;
+    overflow-wrap: break-word;
 }
 
 /* ===================================================
