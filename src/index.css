@@ -70,7 +70,15 @@ header {
     opacity: 0.8;
 }
 
-header img { width: 60px; }
+header img { 
+    width: 60px; 
+    animation: spin 6s linear infinite; /* Gira a una velocidad equilibrada */
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
 
 .header-logo {
     display: flex;
