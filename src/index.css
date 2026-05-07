@@ -42,12 +42,37 @@ header {
     padding: 15px 20px;
     border-bottom: 4px solid var(--borde);
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     gap: 12px;
 }
 
-header img { width: 100px; }
+.nav-menu {
+    list-style: none;
+    display: flex;
+    gap: 12px;
+}
+
+.nav-menu a {
+    font-weight: 700;
+    padding: 8px 16px;
+    border-radius: var(--radio);
+    background: var(--amarillo);
+    transition: transform 0.2s, opacity 0.2s;
+}
+
+.nav-menu a:hover {
+    transform: scale(1.05);
+    opacity: 0.8;
+}
+
+header img { width: 60px; }
+
+.header-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
 
 /* ===================================================
    MAIN CONTAINER

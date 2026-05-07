@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 const Navbar = () => {
   return (
     <header>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+      <div className="header-logo">
         <img src="/assets/img/bola-pokemon.png" alt="Logo PokeApi" />
         <h1>PokeApi</h1>
       </div>
