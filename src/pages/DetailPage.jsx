@@ -57,12 +57,10 @@ const DetailPage = () => {
   const getAllSprites = (obj) => {
     if (!obj) return [];
     let results = new Map();
-
     const isImageUrl = (url) => {
         if (typeof url !== 'string') return false;
         return url.match(/\.(jpeg|jpg|gif|png|svg)$/) !== null || url.includes('/sprites/');
     };
-
     const iterate = (current, prefix = '') => {
       for (const key in current) {
         const value = current[key];
@@ -73,7 +71,6 @@ const DetailPage = () => {
         }
       }
     };
-
     iterate(obj);
     return Array.from(results).map(([url, label]) => ({ label, url }));
   };
@@ -86,12 +83,6 @@ const DetailPage = () => {
     return (
       <div className="detail-layout">
         <section className="detail-panel-left">
-          <button 
-            className={`fav-btn-float ${activeFav ? 'active' : ''}`} 
-            onClick={() => toggleFavorite({ ...main, searchType: type })}
-          >
-            {activeFav ? '❤️' : '🤍'}
-          </button>
           <span className="detail-id">#{String(main.id).padStart(3, '0')}</span>
           <img id="mainSprite" src={activeSprite} alt={main.name} />
           <h2 className="detail-name">{main.name}</h2>
@@ -172,7 +163,6 @@ const DetailPage = () => {
             </div>
           </section>
 
-          {/* GALERÍA DE IMÁGENES (Al final del todo) */}
           {allSprites.length > 0 && (
             <section className="detail-section">
               <h3>Galería de Imágenes</h3>
@@ -202,19 +192,11 @@ const DetailPage = () => {
 
     return (
       <article className="card">
-        <button 
-          className={`fav-btn-float ${activeFav ? 'active' : ''}`} 
-          onClick={() => toggleFavorite({ ...main, searchType: type })}
-          style={{ top: '20px', right: '20px' }}
-        >
-          {activeFav ? '❤️' : '🤍'}
-        </button>
         <h2>{main.name}</h2>
         <section className="detail-section">
           <h3>Descripción</h3>
           <p style={{ fontSize: '.95rem', lineHeight: '1.6' }}>{description}</p>
         </section>
-
         <section className="detail-section">
           <h3>Información</h3>
           <div className="info-grid">
@@ -224,7 +206,6 @@ const DetailPage = () => {
             {main.cost != null && <div className="info-item"><span className="label">Coste</span><span className="value">{main.cost} ₽</span></div>}
           </div>
         </section>
-
         {(main.pokemon || []).length > 0 && (
           <section className="detail-section">
             <h3>Pokémon relacionados</h3>
@@ -236,8 +217,6 @@ const DetailPage = () => {
             </div>
           </section>
         )}
-
-        {/* GALERÍA GENÉRICA (Al final del todo) */}
         {allSprites.length > 0 && (
             <section className="detail-section">
               <h3>Imágenes disponibles</h3>
@@ -261,7 +240,17 @@ const DetailPage = () => {
 
   return (
     <main className="app-container">
-      <Link to="/" className="btn-back">← Volver al buscador</Link>
+      <div className="detail-controls">
+        <Link to="/" className="btn-back">← Volver al buscador</Link>
+        <button 
+          className={`fav-btn-large ${activeFav ? 'active' : ''}`} 
+          onClick={() => toggleFavorite({ ...main, searchType: type })}
+          title={activeFav ? "Quitar de favoritos" : "Añadir a favoritos"}
+        >
+          {activeFav ? '❤️' : '🤍'}
+        </button>
+      </div>
+
       <div id="detailContainer">
         {isPokemon ? renderPokemon() : renderGeneric()}
       </div>

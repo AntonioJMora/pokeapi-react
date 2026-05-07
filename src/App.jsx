@@ -11,13 +11,17 @@ function App() {
   return (
     <FavoritesProvider>
       <Router>
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/:type/:name" element={<DetailPage />} />
-          <Route path="/favorites" element={<FavoritesPage />} />
-        </Routes>
-        <Footer />
+        <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+          <Navbar />
+          <div style={{ flex: 1 }}>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/:type/:name" element={<DetailPage />} />
+              <Route path="/favorites" element={<FavoritesPage />} />
+            </Routes>
+          </div>
+          <Footer />
+        </div>
       </Router>
     </FavoritesProvider>
   );

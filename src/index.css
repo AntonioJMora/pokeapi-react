@@ -20,12 +20,16 @@
     box-sizing: border-box;
 }
 
-body {
+body, #root {
     font-family: 'Outfit', Arial, sans-serif;
     background-color: var(--fondo-body);
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+}
+
+#root {
+    width: 100%;
 }
 
 h2 {
@@ -212,11 +216,43 @@ main.app-container {
     font-weight: 700;
     font-size: .9rem;
     transition: opacity .2s;
-    margin-bottom: 10px;
     width: fit-content;
 }
 
 .btn-back:hover { opacity: .75; }
+
+.detail-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 15px;
+}
+
+.fav-btn-large {
+    background: #fff;
+    border: 2px solid var(--amarillo);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fav-btn-large:hover {
+    background: var(--amarillo-claro);
+    transform: translateY(-2px);
+}
+
+.fav-btn-large.active {
+    border-color: #ff4d4d;
+    background: #fff5f5;
+    color: #c03028;
+}
 
 .detail-layout {
     display: flex;
