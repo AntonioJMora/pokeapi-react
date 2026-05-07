@@ -5,7 +5,7 @@ const Navbar = () => {
   return (
     <header>
       <div className="header-logo">
-          <img src={process.env.PUBLIC_URL + "/assets/img/bola-pokemon.png"} alt="Logo PokeApi" />
+          <img src={`${import.meta.env.BASE_URL}assets/img/bola-pokemon.png`} alt="Logo PokeApi" />
         <h1>PokeApi</h1>
       </div>
       <nav>
