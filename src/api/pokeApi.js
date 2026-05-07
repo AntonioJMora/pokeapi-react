@@ -46,9 +46,12 @@ function cacheSet(key, value) {
 
 const _namesMemory = {};
 
+/**
+ * Devuelve objetos { name, id } para permitir búsqueda por ambos campos.
+ */
 export async function getAllNames(type) {
     if (_namesMemory[type]?.length) return _namesMemory[type];
-    const cacheKey = `poke_allnames_v16_${type}`;
+    const cacheKey = `poke_allnames_v18_${type}`;
     const fromLS = cacheGet(cacheKey);
     if (fromLS !== null && fromLS.length > 0) {
         _namesMemory[type] = fromLS;
@@ -57,22 +60,33 @@ export async function getAllNames(type) {
     const res = await fetch(`${BASE_URL}/${type}?limit=10000`);
     if (!res.ok) throw new Error(`Error al cargar los nombres de ${type}`);
     const json = await res.json();
-    const names = (json.results || []).map(item => item.name);
-    _namesMemory[type] = names;
-    cacheSet(cacheKey, names);
-    return names;
+    
+    // Extraemos nombre e ID de la URL
+    const results = (json.results || []).map(item => {
+        const parts = item.url.split('/');
+        const id = parts[parts.length - 2];
+        return { name: item.name, id: id };
+    });
+
+    _namesMemory[type] = results;
+    cacheSet(cacheKey, results);
+    return results;
 }
 
 export async function searchPokeAPI(type, term) {
     const normalized = term.toLowerCase().trim();
-    const cacheKey = `poke_v16_${type}_${normalized}`;
+    const cacheKey = `poke_v18_${type}_${normalized}`;
     const cached = cacheGet(cacheKey);
     if (cached) return cached;
 
     let targetNames = [];
     if (normalized !== '') {
-        const allNames = await getAllNames(type);
-        targetNames = allNames.filter(name => name.includes(normalized)).slice(0, LIMIT);
+        const allItems = await getAllNames(type);
+        // Filtramos por nombre O por ID
+        targetNames = allItems
+            .filter(item => item.name.includes(normalized) || item.id.toString().includes(normalized))
+            .slice(0, LIMIT)
+            .map(item => item.name);
     } else {
         const res = await fetch(`${BASE_URL}/${type}?limit=${LIMIT}`);
         if (!res.ok) throw new Error(`Error al cargar ${type}`);
@@ -80,10 +94,6 @@ export async function searchPokeAPI(type, term) {
         targetNames = (json.results || []).map(p => p.name);
     }
 
-    /* 
-       MODIFICACIÓN: Si es pokemon O item, descargamos el detalle para tener la imagen.
-       Para otras categorías, descargamos el detalle solo si queremos asegurar fotos (como en types).
-    */
     const needsDetail = ['pokemon', 'item', 'type'].includes(type);
 
     let results = [];
@@ -103,7 +113,7 @@ export async function searchPokeAPI(type, term) {
 }
 
 export async function fetchEntityDetail(type, nameOrId) {
-    const cacheKey = `poke_detail_v16_${type}_${nameOrId}`;
+    const cacheKey = `poke_detail_v18_${type}_${nameOrId}`;
     const cached = cacheGet(cacheKey);
     if (cached) return cached;
     const res = await fetch(`${BASE_URL}/${type}/${nameOrId}`);
@@ -123,7 +133,6 @@ export async function fetchEntityDetail(type, nameOrId) {
 
 export function getSprite(item) {
     if (!item) return '';
-    // Para items la imagen suele estar en sprites.default
     if (item.sprites && typeof item.sprites.default === 'string') return item.sprites.default;
     
     const s = item.sprites || item; 
